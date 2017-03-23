@@ -22,6 +22,8 @@ import com.luis.espol.miscontactos.util.Contacto;
 import com.luis.espol.miscontactos.util.ContactoReceiver;
 import com.luis.espol.miscontactos.util.TextChangedListener;
 
+import static com.luis.espol.miscontactos.util.Contacto.getRoundedCornerBitmap;
+
 //import android.app.Fragment;
 //import android.support.v4.app.Fragment;
 
@@ -65,7 +67,8 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode== Activity.RESULT_OK && requestCode==request_code){
             imgViewContacto.setImageURI(data.getData());
-            imgViewContacto.setTag(data.getData());;
+            imgViewContacto.setTag(data.getData());
+            imgViewContacto.setImageBitmap(getRoundedCornerBitmap(imgViewContacto,true));
         }
     }
 
