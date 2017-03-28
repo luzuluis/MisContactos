@@ -45,15 +45,16 @@ public class ContactoListAdapter extends ArrayAdapter<Contacto> {
         textview=(TextView)view.findViewById(R.id.viewDireccion);
         textview.setText(actual.getDireccion());
         ImageView imgContactoImage=(ImageView)view.findViewById(R.id.imgViewContacto);
-        Uri pathImage= Uri.parse(actual.getImageUri());
-        if (pathImage.equals(Uri.EMPTY)) {
-            //doTheThing()
-            //Toast.makeText(view.getContext(), "imagen "+pathImage.equals(Uri.EMPTY), Toast.LENGTH_SHORT).show();
-            imgContactoImage.setImageURI(pathImage);
-        } else {
-            //followUri is null or empty
+        String isImages=String.valueOf(actual.getImageUri());
+         if(isImages.equals("")){
             //Toast.makeText(view.getContext(), "No hay imagen", Toast.LENGTH_SHORT).show();
             imgContactoImage.setImageResource(R.drawable.usuario);
+        } else {
+            Uri uriImage= Uri.parse(actual.getImageUri());
+            String pathImage=actual.getImageUri();
+            //String msg=String.format(pathImage,"%s ha sido agregada al Contacto de la lista!");
+            //Toast.makeText(view.getContext(), "imagen "+pathImage, Toast.LENGTH_SHORT).show();
+            imgContactoImage.setImageURI(uriImage);
         }
     }
 }

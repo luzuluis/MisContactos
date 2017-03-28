@@ -2,7 +2,9 @@ package com.luis.espol.miscontactos;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -21,8 +23,6 @@ import android.widget.Toast;
 import com.luis.espol.miscontactos.util.Contacto;
 import com.luis.espol.miscontactos.util.ContactoReceiver;
 import com.luis.espol.miscontactos.util.TextChangedListener;
-
-import static com.luis.espol.miscontactos.util.Contacto.getRoundedCornerBitmap;
 
 //import android.app.Fragment;
 //import android.support.v4.app.Fragment;
@@ -65,19 +65,35 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if(resultCode== Activity.RESULT_OK && requestCode==request_code){
+            //se debe poner null para refrescar la imagen y no quede la anterior
+            imgViewContacto.setImageURI(null);
+            //obtiene y guarda la imagen en ImageView
             imgViewContacto.setImageURI(data.getData());
+            //guarda la imagen para que no se pierda en el Tag
             imgViewContacto.setTag(data.getData());
-            imgViewContacto.setImageBitmap(getRoundedCornerBitmap(imgViewContacto,true));
+            //metodo que hace redonda la imagen
+            //imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
+            imgViewContacto.setImageDrawable(imageRoundDraw(imgViewContacto.getDrawable()));
+
+        }else{
+           // imgViewContacto.setImageResource(R.drawable.usuario);
+            imgViewContacto.setTag("");
+
         }
     }
 
     private void agregarContacto(String nombre, String telefono, String email, String direccion, String uriTag) {
         Contacto nuevo=new Contacto(nombre,telefono,email,direccion,uriTag);
-        //adapter.add(nuevo);
+        //crea un intent para la comunicacion entre fragmentos
         Intent intent=new Intent("ListaContactos");
+        //le dice al broadcast lo que debe hacer(agregar contacto)
         intent.putExtra("operacion", ContactoReceiver.CONTACTO_AGREGADO);
+        //guarda los datos del contacto para ser enviado por el broadcast
         intent.putExtra("datos",nuevo);
+        //envia informacion del contacto como nombre telefono,etc
+        // al broadcast para realizar la operacion de agregar
         getActivity().sendBroadcast(intent);
     }
 
@@ -87,6 +103,9 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         txtEmail.getText().clear();
         txtDireccion.getText().clear();
         imgViewContacto.setImageResource(R.drawable.usuario);
+        imgViewContacto.setTag("");
+        //metodo que hace redonda la imagen
+        imgViewContacto.setImageDrawable(imageRound(R.drawable.usuario));
         txtNombre.requestFocus();
     }
     //@Nullable
@@ -118,19 +137,21 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         });
         //evento click de agregar los datos del contacto
         btnAgregar.setOnClickListener(this);
-        //asignamos la imagen de usuario en un int
-        //como parametro en la funcion que nos redondea la imagen
-        int imageUsuario = R.drawable.usuario;
-        //asignamos la imagen redonda que nos devuelve la funcion(imageRound)
-        // en el ImageView de la actividad
-        imgViewContacto.setImageDrawable(imageRound(imageUsuario));
+        imgViewContacto.setTag("");
+        //muestra la imagen
+        imgViewContacto.setImageResource(R.drawable.usuario);
+        //metodo que hace redonda la imagen
+        imgViewContacto.setImageDrawable(imageRound(R.drawable.usuario));
     }
-    public RoundedBitmapDrawable imageRound(int drawable){
-        //extraemos el drawable en un bitmap
-        Drawable originalDrawable = getResources().getDrawable(drawable);
+    //region Metodo Imagen Redondeada
+    //metodo para redondear una imagen desde un path
+    public RoundedBitmapDrawable imageRound(Drawable drawable){
+        //copiamos el drawable
+        Drawable originalDrawable = drawable;
         Bitmap originalBitmap;
+        //convertimos el drawable en un Bitmap
         originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
-
+        //verificamos si la imagen es cuadrada(ancho/altura)
         if (originalBitmap.getWidth() > originalBitmap.getHeight()){
             originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getHeight(), originalBitmap.getHeight());
         }else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
@@ -138,9 +159,40 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         }
         //creamos el drawable redondeado
         RoundedBitmapDrawable roundedDrawable =
-        RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+                RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
         //asignamos el CornerRadius
         roundedDrawable.setCornerRadius(originalBitmap.getHeight());
+        //retornamos la imagen redondeada(RoundBitmapDrawable)
         return roundedDrawable;
+    }
+    //metodo para redondear una imagen desde un Recurso(R.drawable.imagen)
+    public RoundedBitmapDrawable imageRound(int drawable){
+        //extraemos el Resource(R.drawable.imagen) en un drawable
+        Drawable originalDrawable = getResources().getDrawable(drawable);
+        Bitmap originalBitmap;
+        //convertimos el drawable en un Bitmap
+        originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
+        //verificamos si la imagen es cuadrada
+        if (originalBitmap.getWidth() > originalBitmap.getHeight()){
+            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getHeight(), originalBitmap.getHeight());
+        }else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
+            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getWidth());
+        }
+        //creamos el drawable redondeado
+        RoundedBitmapDrawable roundedDrawable =
+                RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+        //asignamos el CornerRadius
+        roundedDrawable.setCornerRadius(originalBitmap.getHeight());
+        //retornamos la imagen redondeada(RoundedBitmapDrawable)
+        return roundedDrawable;
+    }
+    //endregion
+    public RoundedBitmapDrawable imageRoundDraw(Drawable drawable) {
+        Resources resources = getResources();
+        int drawImage=Integer.parseInt(String.valueOf(drawable));
+        Bitmap source = BitmapFactory.decodeResource(resources, drawImage);
+        RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, source);
+        dr.setCornerRadius(Math.max(source.getWidth(), source.getHeight()) / 2.0f);
+        return dr;
     }
 }

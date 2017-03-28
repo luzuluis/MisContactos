@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         // Iniciamos la barra de herramientas.
         Toolbar toolbar = (Toolbar) findViewById(R.id.ToolbarPrincipal);
         //actionBar.setHomeButtonEnabled(false);
-
         setSupportActionBar(toolbar);
         inicializarTabHost();
     }
@@ -41,11 +40,9 @@ public class MainActivity extends AppCompatActivity {
         // Le damos modo "fixed" para que todas las tabs tengan el mismo tamaño. También le asignamos una gravedad centrada.
         tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
-
+        //agregamos las dos pestañas
         tabLayout.addTab(tabLayout.newTab());
         tabLayout.addTab(tabLayout.newTab());
-        //tabLayout.addTab(tabLayout.newTab());
-
         // Iniciamos el viewPager.
         viewPager = (ViewPager) findViewById(R.id.ViewPagerPrincipal);
         // Creamos el adaptador, al cual le pasamos por parámtro el gestor de Fragmentos y muy importante, el nº de tabs o secciones que hemos creado.

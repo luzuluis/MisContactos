@@ -1,11 +1,12 @@
 package com.luis.espol.miscontactos;
 
 //import android.app.Fragment;
-import android.support.v4.app.Fragment;
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,12 +31,13 @@ public class ListaContactosFragment extends Fragment {
     private ArrayAdapter<Contacto> adapterContacto;
     private ListView contactoListView;
     private ContactoReceiver receiver;
+    private SparseBooleanArray array;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView=inflater.inflate(R.layout.fragment_lista_contactos,container,false);
-        inicializarComponnentes(rootView);
+        inicializarComponentes(rootView);
         setHasOptionsMenu(true);
         return rootView;
     }
@@ -55,32 +57,37 @@ public class ListaContactosFragment extends Fragment {
     }
 
     private void eliminarContacto(MenuItem item) {
-        SparseBooleanArray array=contactoListView.getCheckedItemPositions();
+        array=contactoListView.getCheckedItemPositions();
         ArrayList<Contacto>seleccion=new ArrayList<Contacto>();
         if(array==null || array.size()==0)
             Toast.makeText(this.getContext(), "Seleccione algun item para poder eliminar", Toast.LENGTH_SHORT).show();
         else {
-            for (int i = 0; i < array.size(); i++) {
+            int numContacto=array.size();
+            for (int i = 0; i < numContacto; i++) {
                 int posicion = array.keyAt(i);
-                if (array.valueAt(i)) seleccion.add(adapterContacto.getItem(posicion));
-                Intent intent = new Intent("ListaContactos");
-                intent.putExtra("operacion", ContactoReceiver.CONTACTO_ELIMINADO);
-                intent.putExtra("datos", seleccion);
-                //obtenemos la actividad actual y le enviamos al controlador
-                //Receiver que accion hay que hacer(eliminar)
-                getActivity().sendBroadcast(intent);
-                String nombre = String.valueOf(seleccion.get(0));
-                String msg=String.format("%s ha sido eliminado de la lista!",nombre);
-                contactoListView.clearChoices();
-                Toast.makeText(this.getContext(), msg, Toast.LENGTH_SHORT).show();
+                if (array.valueAt(i)){
+                    seleccion.add(adapterContacto.getItem(posicion));
+                }
             }
+            Intent intent = new Intent("ListaContactos");
+            intent.putExtra("operacion", ContactoReceiver.CONTACTO_ELIMINADO);
+            intent.putExtra("datos", seleccion);
+            //obtenemos la actividad actual y le enviamos al controlador
+            //Receiver que accion hay que hacer(eliminar)
+            getActivity().sendBroadcast(intent);
+            /*String nombre = String.valueOf(seleccion.get(i).getNombre());
+            String msg=String.format("%s ha sido eliminado de la lista!",nombre);
+            //contactoListView.clearChoices();
+            Toast.makeText(this.getContext(), msg, Toast.LENGTH_SHORT).show();*/
+            contactoListView.clearChoices();
         }
     }
 
-    private void inicializarComponnentes(View view) {
+    private void inicializarComponentes(View view) {
         contactoListView=(ListView)view.findViewById(R.id.listView);
         adapterContacto=new ContactoListAdapter(getActivity(),new ArrayList<Contacto>());
-        adapterContacto.setNotifyOnChange(true);
+        //no hace falata porque lo manejamos nosotros con el broadcast!!
+        //adapterContacto.setNotifyOnChange(true);
         //Muy importante para que la lista se pueda seleccionar
         contactoListView.setItemsCanFocus (false);
         //Nos permite elegir si la seleccion de mi lista
