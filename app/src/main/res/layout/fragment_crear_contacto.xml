@@ -23,8 +23,8 @@
                 android:id="@+id/imgViewContacto"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:maxWidth="200dp"
-                android:maxHeight="200dp"
+                android:maxWidth="120dp"
+                android:maxHeight="120dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/usuario"
                 android:contentDescription="@string/contenido_descripcion"/>

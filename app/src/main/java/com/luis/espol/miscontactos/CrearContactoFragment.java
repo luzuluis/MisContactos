@@ -74,8 +74,8 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
             //guarda la imagen para que no se pierda en el Tag
             imgViewContacto.setTag(data.getData());
             //metodo que hace redonda la imagen
-            //imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
-            imgViewContacto.setImageDrawable(imageRoundDraw(imgViewContacto.getDrawable()));
+            imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
+            //imgViewContacto.setImageDrawable(imageRoundDraw(imgViewContacto.getDrawable()));
 
         }else{
            // imgViewContacto.setImageResource(R.drawable.usuario);

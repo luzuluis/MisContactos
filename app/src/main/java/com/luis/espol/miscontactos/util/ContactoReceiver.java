@@ -43,12 +43,22 @@ public class ContactoReceiver extends BroadcastReceiver {
         if(lista==null){
             Toast.makeText(this.contextActivity,"No se puede eliminar si no esta seleccionado el item",Toast.LENGTH_SHORT).show();
         }else {
+            int contador=0;
             for (Contacto c : lista){
-                String nombre = String.valueOf(c.getNombre());
+                //String nombre = String.valueOf(c.getNombre());
                 adapterContacto.remove(c);
-                String msg=String.format("%s ha sido eliminado de la lista!",nombre);
+                contador++;
+                //String msg=String.format("%s ha sido eliminado de la lista!",nombre);
+                //Toast.makeText(contextActivity, msg, Toast.LENGTH_SHORT).show();
+            }
+            if (contador==1) {
+                String msg = String.format("%s item ha sido eliminado de la lista!", contador);
+                Toast.makeText(contextActivity, msg, Toast.LENGTH_SHORT).show();
+            }else if(contador>1){
+                String msg = String.format("%s items han sido eliminados de la lista!", contador);
                 Toast.makeText(contextActivity, msg, Toast.LENGTH_SHORT).show();
             }
+
         }
     }
 
