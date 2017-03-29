@@ -2,9 +2,7 @@ package com.luis.espol.miscontactos;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -75,7 +73,7 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
             imgViewContacto.setTag(data.getData());
             //metodo que hace redonda la imagen
             imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
-            //imgViewContacto.setImageDrawable(imageRoundDraw(imgViewContacto.getDrawable()));
+            //imgViewContacto.setSize();
 
         }else{
            // imgViewContacto.setImageResource(R.drawable.usuario);
@@ -187,12 +185,5 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         return roundedDrawable;
     }
     //endregion
-    public RoundedBitmapDrawable imageRoundDraw(Drawable drawable) {
-        Resources resources = getResources();
-        int drawImage=Integer.parseInt(String.valueOf(drawable));
-        Bitmap source = BitmapFactory.decodeResource(resources, drawImage);
-        RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, source);
-        dr.setCornerRadius(Math.max(source.getWidth(), source.getHeight()) / 2.0f);
-        return dr;
-    }
+
 }
