@@ -7,6 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -46,9 +52,6 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
     private Button btnAgregar;
     private final int request_code=1;
     private final int request_select=2;
-    private String MEDIA_DIRECTORY="media";
-    private String FILE_NAME="pic_";
-    private String EXTENSION_NAME=".jpg";
     private String rutaArchivo;
     @Override
     public void onClick(View view) {
@@ -107,19 +110,21 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
 
     //Convierte una url en un Bitmap
     // imgViewContacto.setImageBitmap(bitmap);
-    private Bitmap decodeBitmap(String dir){
+    private Bitmap decodeBitmap(Uri dir){
         Bitmap bitmap;
-        bitmap= BitmapFactory.decodeFile(dir);
+        bitmap= BitmapFactory.decodeFile(String.valueOf(dir));
         return bitmap;
     }
     private void activaCamara() {
         String APP_DIRECTORY = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
-        File archivo=new File(APP_DIRECTORY,MEDIA_DIRECTORY);
-        archivo.mkdir();
-        rutaArchivo= APP_DIRECTORY +File.separator+MEDIA_DIRECTORY+File.separator+getDateFormat()+EXTENSION_NAME;
+        String MEDIA_DIRECTORY = "media";
+        File archivo=new File(APP_DIRECTORY, MEDIA_DIRECTORY);
+        final boolean mkdir = archivo.mkdir();
+        String EXTENSION_NAME = ".jpg";
+        rutaArchivo= APP_DIRECTORY +File.separator+ MEDIA_DIRECTORY +File.separator+getDateFormat()+ EXTENSION_NAME;
         File mi_foto=new File(rutaArchivo);
         try {
-            mi_foto.createNewFile();
+            final boolean newFile = mi_foto.createNewFile();
         } catch (IOException ex) {
             String msg="Error: "+ex;
             Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
@@ -141,7 +146,8 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         String date = dateFormat.format(new Date() );
         //String photoCode = "pic_" + date;
          String photoCode="";
-         photoCode=FILE_NAME + date;
+         String FILE_NAME = "pic_";
+         photoCode= FILE_NAME + date;
          return photoCode;
      }
     @Override
@@ -154,11 +160,24 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
                     //se debe poner null para refrescar la imagen y no quede la anterior
                     //imgViewContacto.setImageURI(null);
                     //obtiene y guarda la imagen en ImageView
-                    imgViewContacto.setImageURI(Uri.parse(rutaArchivo));
+                    ImageView img = imgViewContacto;
+                    img.setImageURI(Uri.parse(rutaArchivo));
                     //guarda la imagen para que no se pierda en el Tag
                     imgViewContacto.setTag(Uri.parse(rutaArchivo));
                     //metodo que hace redonda la imagen
-                    imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
+                    //imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
+                    //RoundedBitmapDrawable rd=imageRound(img.getDrawable());
+                    Bitmap rd=null;
+                    rd=getRoundedCornerBitmap(img.getDrawable(),true);
+                    if (rd.equals(null)){
+                        imgViewContacto.setImageResource(R.drawable.usuario);
+                        imgViewContacto.setTag("");
+                    }else {
+                        //imgViewContacto.setImageDrawable(rd);
+                        imgViewContacto.setImageBitmap(rd);
+                    }
+                    //imgViewContacto.setImageDrawable(imageRound(decodeBitmap(Uri.parse(rutaArchivo))));
+
                 }else{
                  imgViewContacto.setTag("");
                 }
@@ -169,15 +188,27 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
                     //se debe poner null para refrescar la imagen y no quede la anterior
                     //imgViewContacto.setImageURI(null);
                     //obtiene y guarda la imagen en ImageView
-                    imgViewContacto.setImageURI(data.getData());
+                    ImageView img=imgViewContacto;
+                    img.setImageURI(data.getData());
                     //guarda la imagen para que no se pierda en el Tag
                     imgViewContacto.setTag(data.getData());
                     //metodo que hace redonda la imagen
-                    imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
+                    //RoundedBitmapDrawable rd=imageRound(img.getDrawable());
+                    Bitmap rd=null;
+                    rd=getRoundedCornerBitmap(img.getDrawable(),true);
+                    if (rd.equals(null)){
+                        imgViewContacto.setImageResource(R.drawable.usuario);
+                        imgViewContacto.setTag("");
+                    }else {
+                        //imgViewContacto.setImageDrawable(rd);
+                        imgViewContacto.setImageBitmap(rd);
+                    }
+
                 }else {
                     imgViewContacto.setTag("");
                 }
                 break;
+
         }
     }
 
@@ -308,34 +339,45 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         }
 
     }
-    public RoundedBitmapDrawable imageRound(Bitmap bitmap) {
-        int width=0;
-        int height=0;
-        try {
-            Bitmap originalBitmap;
-            originalBitmap = bitmap;
-            //obtenemos el ancho y altura de la imagen
-            width=originalBitmap.getWidth();
-            height=originalBitmap.getHeight();
-            //verificamos si la imagen es cuadrada
-            if (width > height) {
-                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, height, height);
+
+    //endregion
+    public static Bitmap getRoundedCornerBitmap( Drawable drawable, boolean square) {
+        int width = 0;
+        int height = 0;
+
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap() ;
+
+        if(square){
+            if(bitmap.getWidth() < bitmap.getHeight()){
+                width = bitmap.getWidth();
+                height = bitmap.getWidth();
             } else {
-                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, width);
+                width = bitmap.getHeight();
+                height = bitmap.getHeight();
             }
-            //creamos el drawable redondeado
-            RoundedBitmapDrawable roundedDrawable =
-                    RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
-            //asignamos el CornerRadius
-            roundedDrawable.setCornerRadius(originalBitmap.getHeight());
-            //retornamos la imagen redondeada(RoundedBitmapDrawable)
-            return roundedDrawable;
-        } catch (Exception ex) {
-            String msg = "Error: " + ex;
-            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-            return null;
+        } else {
+            height = bitmap.getHeight();
+            width = bitmap.getWidth();
         }
 
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, width, height);
+        final RectF rectF = new RectF(rect);
+        final float roundPx = 360;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
-    //endregion
+
 }
