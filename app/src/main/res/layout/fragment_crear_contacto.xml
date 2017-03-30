@@ -18,14 +18,12 @@
                 android:layout_gravity="top|center_horizontal" />
 
             <ImageView
-                android:layout_width="fill_parent"
+                android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:id="@+id/imgViewContacto"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:maxWidth="120dp"
-                android:maxHeight="120dp"
-                android:scaleType="fitCenter"
+                android:layout_centerInParent="true"
                 android:src="@drawable/usuario"
                 android:contentDescription="@string/contenido_descripcion"/>
 

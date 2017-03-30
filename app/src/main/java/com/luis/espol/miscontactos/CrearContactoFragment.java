@@ -46,7 +46,6 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
     private Button btnAgregar;
     private final int request_code=1;
     private final int request_select=2;
-    private String APP_DIRECTORY ="MyPicturesApp" ;
     private String MEDIA_DIRECTORY="media";
     private String FILE_NAME="pic_";
     private String EXTENSION_NAME=".jpg";
@@ -91,7 +90,8 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
                                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                             }
                             intent.setType("image/*");
-                            startActivityForResult(intent,request_select);
+                            //startActivityForResult(intent,request_select);
+                            startActivityForResult(intent.createChooser(intent,"Seleccione App de Imagen"),request_select);
                             break;
                         default:
                             //cierra la ventana de dialogo
@@ -104,16 +104,19 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
         }
 
     }
-private void decodeBitmap(String dir){
-    Bitmap bitmap;
-    bitmap= BitmapFactory.decodeFile(dir);
-    imgViewContacto.setImageBitmap(bitmap);
-}
+
+    //Convierte una url en un Bitmap
+    // imgViewContacto.setImageBitmap(bitmap);
+    private Bitmap decodeBitmap(String dir){
+        Bitmap bitmap;
+        bitmap= BitmapFactory.decodeFile(dir);
+        return bitmap;
+    }
     private void activaCamara() {
-        APP_DIRECTORY= String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+        String APP_DIRECTORY = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
         File archivo=new File(APP_DIRECTORY,MEDIA_DIRECTORY);
         archivo.mkdir();
-        rutaArchivo=APP_DIRECTORY+File.separator+MEDIA_DIRECTORY+File.separator+getDateFormat()+EXTENSION_NAME;
+        rutaArchivo= APP_DIRECTORY +File.separator+MEDIA_DIRECTORY+File.separator+getDateFormat()+EXTENSION_NAME;
         File mi_foto=new File(rutaArchivo);
         try {
             mi_foto.createNewFile();
@@ -137,8 +140,9 @@ private void decodeBitmap(String dir){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
         String date = dateFormat.format(new Date() );
         //String photoCode = "pic_" + date;
-        String photoCode = FILE_NAME + date;
-        return photoCode;
+         String photoCode="";
+         photoCode=FILE_NAME + date;
+         return photoCode;
      }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -148,7 +152,7 @@ private void decodeBitmap(String dir){
             case request_code:
                 if(resultCode== Activity.RESULT_OK ){
                     //se debe poner null para refrescar la imagen y no quede la anterior
-                    imgViewContacto.setImageURI(null);
+                    //imgViewContacto.setImageURI(null);
                     //obtiene y guarda la imagen en ImageView
                     imgViewContacto.setImageURI(Uri.parse(rutaArchivo));
                     //guarda la imagen para que no se pierda en el Tag
@@ -163,7 +167,7 @@ private void decodeBitmap(String dir){
             case request_select:
                 if(resultCode== Activity.RESULT_OK ){
                     //se debe poner null para refrescar la imagen y no quede la anterior
-                    imgViewContacto.setImageURI(null);
+                    //imgViewContacto.setImageURI(null);
                     //obtiene y guarda la imagen en ImageView
                     imgViewContacto.setImageURI(data.getData());
                     //guarda la imagen para que no se pierda en el Tag
@@ -239,46 +243,99 @@ private void decodeBitmap(String dir){
     //region Metodo Imagen Redondeada
     //metodo para redondear una imagen desde un path
     public RoundedBitmapDrawable imageRound(Drawable drawable){
+        int width=0;
+        int height=0;
         //copiamos el drawable
-        Drawable originalDrawable = drawable;
-        Bitmap originalBitmap;
-        //convertimos el drawable en un Bitmap
-        originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
-        //verificamos si la imagen es cuadrada(ancho/altura)
-        if (originalBitmap.getWidth() > originalBitmap.getHeight()){
-            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getHeight(), originalBitmap.getHeight());
-        }else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
-            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getWidth());
+        try {
+            Bitmap originalBitmap;
+            //convertimos el drawable en un Bitmap
+            originalBitmap = ((BitmapDrawable) drawable).getBitmap();
+            //obtenemos el ancho y altura de la imagen
+            width=originalBitmap.getWidth();
+            height=originalBitmap.getHeight();
+            //verificamos si la imagen es cuadrada(ancho/altura)
+            if (width > height) {
+                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, height, height);
+
+            } else {
+                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, width);
+
+            }
+            //creamos el drawable redondeado
+            RoundedBitmapDrawable roundedDrawable =
+                    RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+            //asignamos el CornerRadius
+            roundedDrawable.setCornerRadius(originalBitmap.getHeight());
+            //retornamos la imagen redondeada(RoundBitmapDrawable)
+            return roundedDrawable;
+        }catch(Exception ex){
+            String msg="Error: "+ex;
+            Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+            return null;
         }
-        //creamos el drawable redondeado
-        RoundedBitmapDrawable roundedDrawable =
-                RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
-        //asignamos el CornerRadius
-        roundedDrawable.setCornerRadius(originalBitmap.getHeight());
-        //retornamos la imagen redondeada(RoundBitmapDrawable)
-        return roundedDrawable;
     }
     //metodo para redondear una imagen desde un Recurso(R.drawable.imagen)
-    public RoundedBitmapDrawable imageRound(int drawable){
+    public RoundedBitmapDrawable imageRound(int drawable) {
+        int width=0;
+        int height=0;
         //extraemos el Resource(R.drawable.imagen) en un drawable
-        Drawable originalDrawable = getResources().getDrawable(drawable);
-        Bitmap originalBitmap;
-        //convertimos el drawable en un Bitmap
-        originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
-        //verificamos si la imagen es cuadrada
-        if (originalBitmap.getWidth() > originalBitmap.getHeight()){
-            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getHeight(), originalBitmap.getHeight());
-        }else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
-            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getWidth());
+        try {
+            Drawable originalDrawable = getResources().getDrawable(drawable);
+            Bitmap originalBitmap;
+            //convertimos el drawable en un Bitmap
+            assert ((BitmapDrawable) originalDrawable) != null;
+            originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
+            //obtenemos el ancho y altura de la imagen
+            width=originalBitmap.getWidth();
+            height=originalBitmap.getHeight();
+            //verificamos si la imagen es cuadrada
+            if (width > height) {
+                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, height, height);
+            } else {
+                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, width);
+            }
+            //creamos el drawable redondeado
+            RoundedBitmapDrawable roundedDrawable =
+                    RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+            //asignamos el CornerRadius
+            roundedDrawable.setCornerRadius(originalBitmap.getHeight());
+            //retornamos la imagen redondeada(RoundedBitmapDrawable)
+            return roundedDrawable;
+        } catch (Exception ex) {
+            String msg = "Error: " + ex;
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            return null;
         }
-        //creamos el drawable redondeado
-        RoundedBitmapDrawable roundedDrawable =
-                RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
-        //asignamos el CornerRadius
-        roundedDrawable.setCornerRadius(originalBitmap.getHeight());
-        //retornamos la imagen redondeada(RoundedBitmapDrawable)
-        return roundedDrawable;
+
+    }
+    public RoundedBitmapDrawable imageRound(Bitmap bitmap) {
+        int width=0;
+        int height=0;
+        try {
+            Bitmap originalBitmap;
+            originalBitmap = bitmap;
+            //obtenemos el ancho y altura de la imagen
+            width=originalBitmap.getWidth();
+            height=originalBitmap.getHeight();
+            //verificamos si la imagen es cuadrada
+            if (width > height) {
+                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, height, height);
+            } else {
+                originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, width);
+            }
+            //creamos el drawable redondeado
+            RoundedBitmapDrawable roundedDrawable =
+                    RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+            //asignamos el CornerRadius
+            roundedDrawable.setCornerRadius(originalBitmap.getHeight());
+            //retornamos la imagen redondeada(RoundedBitmapDrawable)
+            return roundedDrawable;
+        } catch (Exception ex) {
+            String msg = "Error: " + ex;
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
     }
     //endregion
-
 }
