@@ -157,24 +157,20 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
             //si se ha seleccionado de la camara
             case request_code:
                 if(resultCode== Activity.RESULT_OK ){
-                    //se debe poner null para refrescar la imagen y no quede la anterior
-                    //imgViewContacto.setImageURI(null);
                     //obtiene y guarda la imagen en ImageView
-                    ImageView img = imgViewContacto;
-                    img.setImageURI(Uri.parse(rutaArchivo));
+                    imgViewContacto.setImageURI(Uri.parse(rutaArchivo));
                     //guarda la imagen para que no se pierda en el Tag
                     imgViewContacto.setTag(Uri.parse(rutaArchivo));
                     //metodo que hace redonda la imagen
-                    //imgViewContacto.setImageDrawable(imageRound(imgViewContacto.getDrawable()));
-                    //RoundedBitmapDrawable rd=imageRound(img.getDrawable());
-                    Bitmap rd=null;
-                    rd=getRoundedCornerBitmap(img.getDrawable(),true);
-                    if (rd.equals(null)){
+                    RoundedBitmapDrawable rd=imageRound(imgViewContacto.getDrawable());
+                    //Bitmap rd=null;
+                    //rd=getRoundedCornerBitmap(imgViewContacto.getDrawable(),true);
+                    if (rd == null){
                         imgViewContacto.setImageResource(R.drawable.usuario);
                         imgViewContacto.setTag("");
                     }else {
-                        //imgViewContacto.setImageDrawable(rd);
-                        imgViewContacto.setImageBitmap(rd);
+                        imgViewContacto.setImageDrawable(rd);
+                        //imgViewContacto.setImageBitmap(rd);
                     }
                     //imgViewContacto.setImageDrawable(imageRound(decodeBitmap(Uri.parse(rutaArchivo))));
 
@@ -185,23 +181,20 @@ public class CrearContactoFragment extends Fragment implements View.OnClickListe
             //si se ha seleccionado de la galeria
             case request_select:
                 if(resultCode== Activity.RESULT_OK ){
-                    //se debe poner null para refrescar la imagen y no quede la anterior
-                    //imgViewContacto.setImageURI(null);
                     //obtiene y guarda la imagen en ImageView
-                    ImageView img=imgViewContacto;
-                    img.setImageURI(data.getData());
+                    imgViewContacto.setImageURI(data.getData());
                     //guarda la imagen para que no se pierda en el Tag
                     imgViewContacto.setTag(data.getData());
                     //metodo que hace redonda la imagen
-                    //RoundedBitmapDrawable rd=imageRound(img.getDrawable());
-                    Bitmap rd=null;
-                    rd=getRoundedCornerBitmap(img.getDrawable(),true);
-                    if (rd.equals(null)){
+                    RoundedBitmapDrawable rd=imageRound(imgViewContacto.getDrawable());
+                    //Bitmap rd=null;
+                    //rd=getRoundedCornerBitmap(imgViewContacto.getDrawable(),true);
+                    if (rd == null){
                         imgViewContacto.setImageResource(R.drawable.usuario);
                         imgViewContacto.setTag("");
                     }else {
-                        //imgViewContacto.setImageDrawable(rd);
-                        imgViewContacto.setImageBitmap(rd);
+                        imgViewContacto.setImageDrawable(rd);
+                        //imgViewContacto.setImageBitmap(rd);
                     }
 
                 }else {

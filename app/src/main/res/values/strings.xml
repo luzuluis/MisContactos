@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MisContactos</string>
+    <string name="action_eliminar_contacto">eliminar</string>
+    <string name="action_settings">settings</string>
+    <string name="txtContacto">Crear Contacto</string>
+    <string name="contenido_descripcion">Imagen contacto</string>
+    <string name="nombre_de_contacto">nombre</string>
+    <string name="txtTelefono">telefono</string>
+    <string name="txtEmail">email</string>
+    <string name="txtDireccion">direccion</string>
+    <string name="agrega_contacto">Agregar Contacto</string>
+    <string name="imagen_de_usuario">Imagen de Usuario</string>
+    <string name="nombre_del_contacto">Nombre</string>
+    <string name="telefono">telefono</string>
+    <string name="email">email</string>
+    <string name="direccion">direccion</string>
+</resources>
