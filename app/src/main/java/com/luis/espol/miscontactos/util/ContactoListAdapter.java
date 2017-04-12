@@ -2,12 +2,14 @@ package com.luis.espol.miscontactos.util;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.luis.espol.miscontactos.BitmapImagen;
 import com.luis.espol.miscontactos.R;
 
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
  */
 public class ContactoListAdapter extends ArrayAdapter<Contacto> {
     private Activity ctx;
-
+    private BitmapImagen imagen;
     //private List<Contacto> contactos=new ArrayList<Contacto>();
     public ContactoListAdapter(Activity context, List<Contacto> contactos) {
         super(context, R.layout.listview_item, contactos);
@@ -51,10 +53,26 @@ public class ContactoListAdapter extends ArrayAdapter<Contacto> {
             imgContactoImage.setImageResource(R.drawable.usuario);
         } else {
             Uri uriImage= Uri.parse(actual.getImageUri());
-            String pathImage=actual.getImageUri();
+            //String pathImage=actual.getImageUri();
             //String msg=String.format(pathImage,"%s ha sido agregada al Contacto de la lista!");
             //Toast.makeText(view.getContext(), "imagen "+pathImage, Toast.LENGTH_SHORT).show();
-            imgContactoImage.setImageURI(uriImage);
+            imagen=new BitmapImagen(getContext());
+            /*imgContactoImage.setImageURI(uriImage);
+             Drawable drawable= imgContactoImage.getDrawable();
+             Bitmap bitmap=((BitmapDrawable) drawable).getBitmap();
+            bitmap=imagen.giraImagen(bitmap,String.valueOf(actual.getImageUri()),150,150);
+            imgContactoImage.setImageBitmap(bitmap);*/
+             //metodo que hace redonda la imagen
+             RoundedBitmapDrawable rd=null;
+             rd=imagen.imageCircle(uriImage,150,150);
+             if (rd == null){
+                 imgContactoImage.setImageResource(R.drawable.usuario);
+                 imgContactoImage.setTag("");
+             }else {
+                 //imgContactoImage.setImageBitmap(rd);
+                 imgContactoImage.setImageDrawable(rd);
+                 //imgContactoImage.setImageURI(data.getData());
+             }
         }
     }
 }

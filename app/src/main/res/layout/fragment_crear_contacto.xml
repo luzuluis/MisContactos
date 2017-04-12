@@ -18,12 +18,11 @@
                 android:layout_gravity="top|center_horizontal" />
 
             <ImageView
-                android:layout_width="130dp"
-                android:layout_height="130dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imgViewContacto"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
                 android:src="@drawable/usuario"
                 android:contentDescription="@string/contenido_descripcion"/>
 

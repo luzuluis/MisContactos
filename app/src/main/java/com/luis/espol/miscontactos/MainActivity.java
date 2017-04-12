@@ -1,6 +1,7 @@
 package com.luis.espol.miscontactos;
 
 import android.app.ActionBar;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -75,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
         tab.setIndicator("Crear Contacto");
         tabHost.addTab(tab);*/
         //viewPager.setOnPageChangeListener(this);
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.activity_main);
     }
 
 /*

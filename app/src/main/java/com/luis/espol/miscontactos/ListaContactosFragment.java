@@ -33,6 +33,7 @@ public class ListaContactosFragment extends Fragment {
     private ContactoReceiver receiver;
     private SparseBooleanArray array;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,6 +96,7 @@ public class ListaContactosFragment extends Fragment {
         contactoListView.setChoiceMode (ListView.CHOICE_MODE_MULTIPLE);
         //le paso el control de mi lista al adaptador
         contactoListView.setAdapter(adapterContacto);
+
     }
 
     @Override
