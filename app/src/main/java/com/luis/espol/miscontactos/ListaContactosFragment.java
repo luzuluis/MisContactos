@@ -52,6 +52,7 @@ public class ListaContactosFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_eliminar_contacto:eliminarContacto(item);return true;
+            case R.id.action_llamar_contacto:llamarContacto(item);return true;
             default:return super.onOptionsItemSelected(item);
         }
 
@@ -84,6 +85,30 @@ public class ListaContactosFragment extends Fragment {
         }
     }
 
+    private void llamarContacto(MenuItem item){
+        array=contactoListView.getCheckedItemPositions();
+        ArrayList<Contacto>seleccionado=new ArrayList<Contacto>();
+        if(array==null || array.size()==0)
+            Toast.makeText(getContext(), "Seleccione algun item para poder llamar", Toast.LENGTH_SHORT).show();
+        else {
+            int numContacto=array.size();
+            if (numContacto==1) {
+                int posicion = array.keyAt(numContacto);
+                seleccionado.add(adapterContacto.getItem(posicion));
+                Intent intent = new Intent("ListaContactos");
+                intent.putExtra("operacion", ContactoReceiver.CONTACTO_LLAMAR);
+                intent.putExtra("datos", seleccionado);
+                //obtenemos la actividad actual y le enviamos al controlador
+                //Receiver que accion hay que hacer(eliminar)
+                getActivity().sendBroadcast(intent);
+                contactoListView.clearChoices();
+            }else{
+                String msg=String.format("%s de la lista tiene mas de un item seleccionado!!","El contacto");
+                //contactoListView.clearChoices();
+                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+       }
+    }
     private void inicializarComponentes(View view) {
         contactoListView=(ListView)view.findViewById(R.id.listView);
         adapterContacto=new ContactoListAdapter(getActivity(),new ArrayList<Contacto>());

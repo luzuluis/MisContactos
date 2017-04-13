@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">MisContactos</string>
+    <string name="action_llamar_contacto">llamar</string>
     <string name="action_eliminar_contacto">eliminar</string>
     <string name="action_settings">settings</string>
     <string name="txtContacto">Crear Contacto</string>
